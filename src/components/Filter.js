@@ -6,7 +6,7 @@ export const Filter = ({filterData}) => {
     {
         filterData.map((data) => {
             return(
-            <button>
+        <button key = {data.id}>
                 {data.title}
             </button>
             )

@@ -1,47 +1,57 @@
-import React, { useState } from "react";
-import {apiUrl,filterData} from "./data";
+import React from "react";
 import Navbar from "./components/Navbar";
 import Filter from "./components/Filter";
 import Cards from "./components/Cards";
-import { toast} from "react-toastify"
-import { useEffect } from "react";
-import Card from "./components/Card";
+import {apiUrl,filterData} from "./data";
+import { useState,useEffect } from "react";
+import Spiner from "./components/Spiner";
+import { toast } from "react-toastify";
+
 
 const App = () => {
+  const [courses,setCourses] = useState(null);
+  const [loading, setLoading] = useState(true);
 
 
-   const[Courses, setCourses] = useState(null);
-  useEffect ( () =>{
-    const fetchData = async() => {
-      try{
-          const res = await fetch (apiUrl);
-          const output = await res.json();
-          // save data into a varibale
-          setCourses(output.data)
-          console.log("courses value update");
-          console.log(Courses);
-
-      } 
-      catch(error){
-       toast.error("something went wrong");
-      }
+   async function fetchData () {
+    setLoading(true);
+    try{
+        let response  = await fetch(apiUrl);
+        let output = await response.json();
+        //output ->
+        setCourses(output.data);
     }
+    catch(error){
+     toast.error("network mai koi dikkat hai");
+
+    }
+    setLoading(false);
+   }
+
+   useEffect ( () => {
     fetchData();
-  },[]);
+   },[])
 
 
-  return(
-    <div>
-      <Navbar/>
+  return (<div>
 
-      <Filter filterData= {filterData}/>
+  <div>
+    <Navbar/>
+  </div>
 
-      <Cards Courses={Courses}/>
+  
+  <div>
+    <Filter filterData={filterData}/>
+  </div>
 
-      <Card/>
-      
-    
-    </div>
+  
+  <div>
+   {
+     loading ? (<Spiner/>) : (<Cards courses ={courses}/>)
+   }
+  </div>
+
+  </div>
   );
 };
 
